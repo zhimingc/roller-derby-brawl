@@ -1,9 +1,83 @@
 extends "res://ModularPattern/Driver.gd"
 
+enum PlayerState { CRUISE, ATTACK }
+
+export var attackColor : Color 
+export var attackSpeedLimit = 150.0
+
+var state = PlayerState.CRUISE
+var originalColor
+
+# state vars
+var oldState
+var changeTimer = 0.0
+var changeRate = 0.25
+var oldSprite
+var newSprite
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	._ready()	
 	gm.set_pc(self)
-	._ready()
+	originalColor = $KinematicBody2D/Sprite.modulate
+	set_state(PlayerState.CRUISE, true)
+	
+func _process(delta):
+	._process(delta)
+	update_state(delta)
+
+func update_state(delta):
+	var speed = $P_Movement.velocity.length()
+	# if Input.is_action_pressed("thrust") or 
+	if speed >= attackSpeedLimit:
+		set_state(PlayerState.ATTACK)
+	else:
+		set_state(PlayerState.CRUISE)
+
+	update_state_change(delta)
+
+func update_state_change(delta):
+	changeTimer += delta	
+	var changeAmt = changeTimer / changeRate
+	if changeAmt < 1:
+		oldSprite.set_scale(Vector2.ONE * (1 - changeAmt))
+		newSprite.set_scale(Vector2.ONE * changeAmt)
+	else:
+		oldSprite.set_scale(Vector2())
+		newSprite.set_scale(Vector2.ONE)
+
+func set_state(newState, force = false):
+	if oldState == newState and !force:
+		return
+	
+	# exit state
+	match state:
+		PlayerState.CRUISE:
+			oldSprite = $KinematicBody2D/Sprite
+		PlayerState.ATTACK:
+			oldSprite = $KinematicBody2D/AttackSprite
+	
+	#enter state
+	state = newState
+	match state:
+		PlayerState.CRUISE:
+			newSprite = $KinematicBody2D/Sprite			
+			newSprite.modulate = originalColor
+		PlayerState.ATTACK:
+			newSprite = $KinematicBody2D/AttackSprite			
+			newSprite.modulate = attackColor
+
+	changeTimer = newSprite.get_scale().x
+	oldState = newState
+
+func enemy_collision(enemy):
+	if state == PlayerState.CRUISE:
+		die()
+	else:
+		kill(enemy)
+
+func kill(enemy):
+	enemy.die()
 
 func die():
 	$Particles_Death.global_position = $KinematicBody2D.global_position

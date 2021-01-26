@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Parts/Orientation/2D_MousePointer.gd" type="Script" id=1]
 [ext_resource path="res://Parts/Movement/2D_ForwardVector_TopDown.gd" type="Script" id=2]
@@ -6,12 +6,14 @@
 [ext_resource path="res://Player/triangle-64.png" type="Texture" id=4]
 [ext_resource path="res://Assets/cross-64.png" type="Texture" id=5]
 [ext_resource path="res://Assets/Particles/player_death.tres" type="Material" id=6]
+[ext_resource path="res://Assets/circle-64.png" type="Texture" id=7]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 25.3558
 
 [node name="Player" type="Node2D"]
 script = ExtResource( 3 )
+attackColor = Color( 0.244, 0.75, 0.09, 1 )
 
 [node name="P_Movement" type="Node2D" parent="."]
 script = ExtResource( 2 )
@@ -24,10 +26,17 @@ rotateSpeed = 135
 "Player",
 ]]
 
-[node name="Sprite" type="Sprite" parent="KinematicBody2D"]
+[node name="AttackSprite" type="Sprite" parent="KinematicBody2D"]
 modulate = Color( 0.0901961, 0.717647, 0.74902, 1 )
 rotation = 1.5708
+scale = Vector2( 1e-05, 1e-05 )
 texture = ExtResource( 4 )
+
+[node name="Sprite" type="Sprite" parent="KinematicBody2D"]
+modulate = Color( 0.0901961, 0.717647, 0.74902, 1 )
+position = Vector2( -7.5, 0 )
+rotation = 1.5708
+texture = ExtResource( 7 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D"]
 position = Vector2( -7.31503, 0.23597 )
@@ -35,6 +44,7 @@ rotation = 1.5708
 shape = SubResource( 1 )
 
 [node name="Particles_Death" type="Particles2D" parent="."]
+modulate = Color( 0.0901961, 0.717647, 0.74902, 1 )
 emitting = false
 one_shot = true
 explosiveness = 1.0

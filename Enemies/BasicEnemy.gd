@@ -29,7 +29,12 @@ func update_movement(delta):
 		moveRate = max(moveRate - rateUp, rateMin)
 		moveTimer = 0.0
 
-
 func _on_BasicEnemy_body_entered(body):
 	if body.is_in_group("Player"):
-		body.get_parent().die()
+		body.get_parent().enemy_collision(self)
+
+func die():
+	$Particles_Death.global_position = global_position
+	$Particles_Death.emitting = true
+	$CollisionShape2D.set_deferred("disabled", true)
+	$Sprite.visible = false
