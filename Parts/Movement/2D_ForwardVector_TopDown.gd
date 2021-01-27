@@ -4,11 +4,12 @@ export var ACCELERATION = 500
 export var DRAG = .98
 export var MAX_SPEED = 500
 
+var canAccelerate = true
 var velocity = Vector2()
 
 func _physics_update(delta, body : KinematicBody2D):
 	var axis = get_move_input()
-	if axis > 0.0:
+	if canAccelerate and axis > 0.0:
 		apply_acceleration(axis * ACCELERATION * delta * body.transform.x)
 		#$AnimationPlayer.play("PC_walk")
 	

@@ -4,9 +4,15 @@ enum PlayerState { CRUISE, ATTACK }
 
 export var attackColor : Color 
 export var attackSpeedLimit = 150.0
+export var staminaUse = 75.0
+export var staminaRegen = 50.0
 
 var state = PlayerState.CRUISE
 var originalColor
+var stamina = 100.0
+
+# ui vars
+var staminaBarOffset : Vector2
 
 # state vars
 var oldState
@@ -20,15 +26,25 @@ func _ready():
 	._ready()	
 	gm.set_pc(self)
 	originalColor = $KinematicBody2D/Sprite.modulate
+	staminaBarOffset = $StaminaDisplay.rect_global_position
 	set_state(PlayerState.CRUISE, true)
-	
+
 func _process(delta):
 	._process(delta)
 	update_state(delta)
 
 func update_state(delta):
 	var speed = $P_Movement.velocity.length()
-	# if Input.is_action_pressed("thrust") or 
+	
+	# stamina update
+	if Input.is_action_pressed("thrust"):
+		stamina = max(0.0, stamina - staminaUse * delta)
+	elif !Input.is_action_pressed("thrust"):
+		stamina = min(100.0, stamina + staminaRegen * delta)
+	$StaminaDisplay.value = stamina
+	$StaminaDisplay.rect_global_position = $KinematicBody2D.global_position + staminaBarOffset
+	$P_Movement.canAccelerate = true if stamina > 0.0 else false	
+	
 	if speed >= attackSpeedLimit:
 		set_state(PlayerState.ATTACK)
 	else:
@@ -84,3 +100,4 @@ func die():
 	$Particles_Death.emitting = true
 	$KinematicBody2D/CollisionShape2D.set_deferred("disabled", true)
 	$KinematicBody2D.visible = false
+	$StaminaDisplay.visible = false
