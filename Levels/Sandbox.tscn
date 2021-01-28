@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Assets/square_64.png" type="Texture" id=2]
@@ -6,6 +6,10 @@
 [ext_resource path="res://Assets/Tileset/Level_0_TS.tres" type="TileSet" id=4]
 [ext_resource path="res://Levels/Level-0.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Enemies/BasicEnemy.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Enemies/EnemyManager.gd" type="Script" id=7]
+[ext_resource path="res://Assets/square-100.png" type="Texture" id=8]
+[ext_resource path="res://Assets/circle-64.png" type="Texture" id=9]
+[ext_resource path="res://Enemies/DebugEnemy.tscn" type="PackedScene" id=10]
 
 [sub_resource type="PhysicsMaterial" id=1]
 bounce = 0.5
@@ -83,6 +87,12 @@ texture = ExtResource( 2 )
 [node name="Player" parent="." instance=ExtResource( 1 )]
 scale = Vector2( 0.5, 0.5 )
 
+[node name="Sprite2" type="Sprite" parent="Player/KinematicBody2D" index="0"]
+visible = false
+modulate = Color( 1, 1, 1, 0.419608 )
+scale = Vector2( 10, 10 )
+texture = ExtResource( 9 )
+
 [node name="Notepad" type="RichTextLabel" parent="."]
 margin_left = -1494.0
 margin_top = -424.0
@@ -110,9 +120,22 @@ cell_size = Vector2( 16, 16 )
 cell_custom_transform = Transform2D( 0, 0, 0, 0, 0, 0 )
 format = 1
 
+[node name="EnemyManager" type="Node2D" parent="."]
+script = ExtResource( 7 )
+debugEnemy = ExtResource( 10 )
+
+[node name="SpawnRange" type="Sprite" parent="EnemyManager"]
+visible = false
+modulate = Color( 1, 0, 0, 0.301961 )
+scale = Vector2( 10, 5 )
+texture = ExtResource( 8 )
+__meta__ = {
+"_edit_lock_": true
+}
+
 [node name="BasicEnemy" parent="." instance=ExtResource( 6 )]
-position = Vector2( -400, -168 )
-moveForce = 100.0
-moveRate = 2.5
+position = Vector2( -354.897, -164.234 )
 
 [editable path="Level-0"]
+
+[editable path="Player"]
