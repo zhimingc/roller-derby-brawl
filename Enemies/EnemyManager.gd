@@ -4,8 +4,10 @@ export (PackedScene) var debugEnemy
 export (PackedScene) var basicEnemy
 
 # spawn vars
-export var spawnRate = 5.0
+export var spawnRate = 3.0
+export var spawnRateMin = 1.0
 export var spawnDist = 200.0
+export var spawnRateUp = 0.1
 
 var spawnTimer = 0.0
 var debugUnits : Array
@@ -16,7 +18,7 @@ func _ready():
 
 func _process(delta):
 	# update_debug()
-	pass
+	update_spawn(delta)
 
 func ready_debug():
 	for i in debugNum:
@@ -30,6 +32,13 @@ func update_debug():
 		var distToPc = debugUnits[i].global_position.distance_to(gm.pc.body.global_position)
 		if distToPc < spawnDist:
 			debugUnits[i].global_position = get_spawn_location()
+
+func update_spawn(delta):
+	spawnTimer += delta
+	if spawnTimer >= spawnRate:
+		spawn_enemy()
+		spawnTimer = 0.0
+		spawnRate = max(spawnRateMin, spawnRate - spawnRateUp)
 
 func get_spawn_location():
 	var i = 0

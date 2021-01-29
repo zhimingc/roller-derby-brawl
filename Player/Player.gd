@@ -2,6 +2,8 @@ extends "res://ModularPattern/Driver.gd"
 
 enum PlayerState { CRUISE, ATTACK }
 
+signal kill_enemy
+
 export var attackColor : Color 
 export var attackSpeedLimit = 150.0
 export var staminaUse = 75.0
@@ -91,6 +93,7 @@ func enemy_collision(enemy):
 		die()
 	else:
 		kill(enemy)
+		emit_signal("kill_enemy")
 
 func kill(enemy):
 	enemy.die()

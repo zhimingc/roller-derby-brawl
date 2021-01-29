@@ -1,6 +1,6 @@
 extends RigidBody2D
 
-export var moveForce = 50.0
+export var moveForce = 100.0
 export var forceUp = 10.0
 export var moveRate = 3.0
 export var rateUp = 0.1
