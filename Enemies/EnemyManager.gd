@@ -4,21 +4,31 @@ export (PackedScene) var debugEnemy
 export (PackedScene) var basicEnemy
 
 # spawn vars
-export var spawnRate = 3.0
-export var spawnRateMin = 1.0
-export var spawnDist = 200.0
-export var spawnRateUp = 0.1
+export var spawnRate = 2.8
+export var spawnRateMin = 0.5
+export var spawnDist = 250.0
+export var spawnRateUp = 0.2
 
 var spawnTimer = 0.0
 var debugUnits : Array
 var debugNum = 100
+var stop = false
+
+signal killAll
 
 func _ready():
+	spawnTimer = spawnRate
 	pass
 
 func _process(delta):
+	if stop:
+		return
 	# update_debug()
 	update_spawn(delta)
+
+func _input(ev):
+	if ev is InputEventKey and ev.scancode == KEY_K and not ev.echo:
+		stop()
 
 func ready_debug():
 	for i in debugNum:
@@ -59,3 +69,11 @@ func spawn_enemy():
 	var spawnLoc = get_spawn_location()
 	add_child(newEnemy)
 	newEnemy.global_position = spawnLoc
+	newEnemy.connect_manager(self)
+
+func stop():
+	emit_signal("killAll")
+	stop = true
+
+func _on_ScoreManager_win():
+	stop()

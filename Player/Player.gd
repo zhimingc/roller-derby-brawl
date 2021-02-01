@@ -1,11 +1,11 @@
 extends "res://ModularPattern/Driver.gd"
 
-enum PlayerState { CRUISE, ATTACK }
+enum PlayerState { CRUISE, ATTACK, DEAD }
 
 signal kill_enemy
 
 export var attackColor : Color 
-export var attackSpeedLimit = 150.0
+export var attackSpeedLimit = 200.0
 export var staminaUse = 75.0
 export var staminaRegen = 50.0
 
@@ -22,6 +22,8 @@ var changeTimer = 0.0
 var changeRate = 0.25
 var oldSprite
 var newSprite
+var cruiseSize = Vector2(0.8, 0.8)
+var attackSize = Vector2(1, 1)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -39,13 +41,13 @@ func update_state(delta):
 	var speed = $P_Movement.velocity.length()
 	
 	# stamina update
-	if Input.is_action_pressed("thrust"):
-		stamina = max(0.0, stamina - staminaUse * delta)
-	elif !Input.is_action_pressed("thrust"):
-		stamina = min(100.0, stamina + staminaRegen * delta)
-	$StaminaDisplay.value = stamina
-	$StaminaDisplay.rect_global_position = $KinematicBody2D.global_position + staminaBarOffset
-	$P_Movement.canAccelerate = true if stamina > 0.0 else false	
+#	if Input.is_action_pressed("thrust"):
+#		stamina = max(0.0, stamina - staminaUse * delta)
+#	elif !Input.is_action_pressed("thrust"):
+#		stamina = min(100.0, stamina + staminaRegen * delta)
+#	$StaminaDisplay.value = stamina
+#	$StaminaDisplay.rect_global_position = $KinematicBody2D.global_position + staminaBarOffset
+#	$P_Movement.canAccelerate = true if stamina > 0.0 else false	
 	
 	if speed >= attackSpeedLimit:
 		set_state(PlayerState.ATTACK)
@@ -53,6 +55,14 @@ func update_state(delta):
 		set_state(PlayerState.CRUISE)
 
 	update_state_change(delta)
+	
+	match state:
+		PlayerState.CRUISE:
+			$CruiseDisplay.value = speed / attackSpeedLimit
+			$CruiseDisplay.rect_global_position = $KinematicBody2D.global_position + staminaBarOffset
+		PlayerState.ATTACK:
+			$AttackDisplay.value = (speed - attackSpeedLimit) / attackSpeedLimit
+			$AttackDisplay.rect_global_position = $KinematicBody2D.global_position + staminaBarOffset
 
 func update_state_change(delta):
 	changeTimer += delta	
@@ -65,7 +75,7 @@ func update_state_change(delta):
 		newSprite.set_scale(Vector2.ONE)
 
 func set_state(newState, force = false):
-	if oldState == newState and !force:
+	if (oldState == newState or state == PlayerState.DEAD) and !force:
 		return
 	
 	# exit state
@@ -79,12 +89,24 @@ func set_state(newState, force = false):
 	state = newState
 	match state:
 		PlayerState.CRUISE:
-			newSprite = $KinematicBody2D/Sprite			
+			newSprite = $KinematicBody2D/Sprite		
 			newSprite.modulate = originalColor
+			$CruiseDisplay.visible = true
+			$AttackDisplay.visible = false
 		PlayerState.ATTACK:
 			newSprite = $KinematicBody2D/AttackSprite			
 			newSprite.modulate = attackColor
-
+			$AttackDisplay.visible = true			
+			$CruiseDisplay.visible = false
+		PlayerState.DEAD:
+			$Particles_Death.global_position = $KinematicBody2D.global_position
+			$Particles_Death.emitting = true
+			$KinematicBody2D/CollisionShape2D.set_deferred("disabled", true)
+			$KinematicBody2D.visible = false
+			$StaminaDisplay.visible = false
+			$CruiseDisplay.visible = false
+			$AttackDisplay.visible = false
+			
 	changeTimer = newSprite.get_scale().x
 	oldState = newState
 
@@ -99,8 +121,5 @@ func kill(enemy):
 	enemy.die()
 
 func die():
-	$Particles_Death.global_position = $KinematicBody2D.global_position
-	$Particles_Death.emitting = true
-	$KinematicBody2D/CollisionShape2D.set_deferred("disabled", true)
-	$KinematicBody2D.visible = false
-	$StaminaDisplay.visible = false
+	set_state(PlayerState.DEAD)
+

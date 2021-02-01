@@ -1,6 +1,10 @@
 extends Node
 
 var pc
+var cam
+
+signal play_sfx(sfx)
+signal play_sfx_pitch(sfx, pitch)
 
 func set_pc(player):
 	pc = player

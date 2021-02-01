@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Parts/Orientation/2D_MousePointer.gd" type="Script" id=1]
 [ext_resource path="res://Parts/Movement/2D_ForwardVector_TopDown.gd" type="Script" id=2]
@@ -8,6 +8,7 @@
 [ext_resource path="res://Assets/Particles/player_death.tres" type="Material" id=6]
 [ext_resource path="res://Assets/circle-64.png" type="Texture" id=7]
 [ext_resource path="res://Assets/circle-line-64.png" type="Texture" id=8]
+[ext_resource path="res://Assets/faded-arrow-256.png" type="Texture" id=9]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 25.3558
@@ -35,10 +36,20 @@ rotation = 1.5708
 scale = Vector2( 1e-05, 1e-05 )
 texture = ExtResource( 4 )
 
-[node name="Sprite" type="Sprite" parent="KinematicBody2D"]
+[node name="Sprite" type="Node2D" parent="KinematicBody2D"]
 modulate = Color( 0.0901961, 0.717647, 0.74902, 1 )
 rotation = 1.5708
+
+[node name="Sprite2" type="Sprite" parent="KinematicBody2D/Sprite"]
+scale = Vector2( 0.75, 0.75 )
 texture = ExtResource( 7 )
+
+[node name="OrientationArrow" type="Sprite" parent="KinematicBody2D/Sprite"]
+modulate = Color( 1, 1, 1, 0.45098 )
+position = Vector2( 0, -60 )
+rotation = -3.57628e-06
+scale = Vector2( 0.25, 0.4 )
+texture = ExtResource( 9 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D"]
 rotation = 1.5708
@@ -53,6 +64,7 @@ process_material = ExtResource( 6 )
 texture = ExtResource( 5 )
 
 [node name="StaminaDisplay" type="TextureProgress" parent="."]
+visible = false
 self_modulate = Color( 0.203922, 0.74902, 0.0901961, 1 )
 anchor_right = 0.5
 anchor_bottom = 0.5
@@ -60,6 +72,38 @@ margin_left = -64.0
 margin_top = -64.0
 rect_scale = Vector2( 2, 2 )
 value = 25.0
+texture_progress = ExtResource( 8 )
+fill_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CruiseDisplay" type="TextureProgress" parent="."]
+self_modulate = Color( 0.0431373, 0.658824, 0.72549, 1 )
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -64.0
+margin_top = -64.0
+rect_scale = Vector2( 2, 2 )
+max_value = 1.0
+step = 0.01
+value = 0.6
+texture_progress = ExtResource( 8 )
+fill_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AttackDisplay" type="TextureProgress" parent="."]
+visible = false
+self_modulate = Color( 0.203922, 0.74902, 0.0901961, 1 )
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -64.0
+margin_top = -64.0
+rect_scale = Vector2( 2, 2 )
+max_value = 1.0
+step = 0.01
 texture_progress = ExtResource( 8 )
 fill_mode = 4
 __meta__ = {
