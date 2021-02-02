@@ -30,9 +30,10 @@ func play_sound(sfx):
 	else:
 		print("No sound effect called: " + sfx)
 
-func play_sound_pitch(sfx, pitch):
+func play_sound_pitch(sfx, pitch, vol = 1.0):
 	var stream = get_free_stream()	
 	if sfxLib.has(sfx):
 		stream.set_stream(sfxLib[sfx])
 		stream.set_pitch_scale(pitch)
+		stream.set_volume_db(vol)	
 		stream.play()

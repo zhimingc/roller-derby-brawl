@@ -8,10 +8,13 @@
 radius = 16.0
 
 [node name="BasicEnemy" type="RigidBody2D"]
+position = Vector2( 428.522, 258.361 )
 gravity_scale = 0.0
 contacts_reported = 1
 contact_monitor = true
 script = ExtResource( 2 )
+circleSprite = ExtResource( 1 )
+bloodCol = Color( 0.638375, 0.6075, 0.75, 1 )
 startColor = Color( 0.235294, 0.0901961, 0.74902, 1 )
 endColor = Color( 0.74902, 0.0901961, 0.215686, 1 )
 

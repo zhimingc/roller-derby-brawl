@@ -12,13 +12,16 @@ export var spawnRateUp = 0.2
 var spawnTimer = 0.0
 var debugUnits : Array
 var debugNum = 100
-var stop = false
+var stop = true
 
 signal killAll
 
 func _ready():
+	gm.connect("start", self, "start_game")
 	spawnTimer = spawnRate
-	pass
+
+func start_game():
+	stop = false
 
 func _process(delta):
 	if stop:
@@ -27,9 +30,10 @@ func _process(delta):
 	update_spawn(delta)
 
 func _input(ev):
-	if ev is InputEventKey and ev.scancode == KEY_K and not ev.echo:
-		stop()
-
+	#if ev is InputEventKey and ev.scancode == KEY_K and not ev.echo:
+	#	stop()
+	pass
+	
 func ready_debug():
 	for i in debugNum:
 		var debug = debugEnemy.instance()

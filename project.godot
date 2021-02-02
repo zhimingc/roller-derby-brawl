@@ -13,14 +13,20 @@ _global_script_classes=[ {
 "class": "Part",
 "language": "GDScript",
 "path": "res://ModularPattern/Part.gd"
+}, {
+"base": "Node",
+"class": "Player",
+"language": "GDScript",
+"path": "res://Player/Player.gd"
 } ]
 _global_script_class_icons={
-"Part": ""
+"Part": "",
+"Player": ""
 }
 
 [application]
 
-config/name="roller-derby-brawl"
+config/name="squish-100"
 run/main_scene="res://Levels/Sandbox.tscn"
 config/icon="res://icon.png"
 
